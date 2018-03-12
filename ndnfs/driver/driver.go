@@ -245,7 +245,7 @@ func (d NdnfsDriver) Mount(r *volume.MountRequest) (*volume.MountResponse, error
 	var mnt string
 	var err error
 
-	nfs := fmt.Sprintf("%s:/%s", d.Config.Nedgedata, r.Name)
+	nfs := fmt.Sprintf("%s:/%s/%s", d.Config.Nedgedata, d.Config.Tenantname, r.Name)
 	mnt = filepath.Join(d.Config.Mountpoint, r.Name)
 	log.Debug(DN, "Creating mountpoint folder: ", mnt)
 	if out, err := exec.Command("mkdir", "-p", mnt).CombinedOutput(); err != nil {
