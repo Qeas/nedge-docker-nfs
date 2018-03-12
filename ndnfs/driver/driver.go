@@ -271,35 +271,6 @@ func (d NdnfsDriver) Remove(r *volume.RemoveRequest) error {
 	log.Info(DN, "Remove volume: ", r.Name)
 	d.Mutex.Lock()
 	defer d.Mutex.Unlock()
-	// nfsList, err := d.GetNfsList()
-	// if err != nil {
-	// 	log.Info("Error getting nfs list", err)
-	// 	return err
-	// }
-	// var path, service string
-	// bucket := filepath.Join(d.Config.Clustername, d.Config.Tenantname, r.Name)
-	// for i := range(nfsList) {
-	// 	if strings.Contains(nfsList[i], bucket) {
-	// 		path = nfsList[i]
-	// 	}
-	// }
-	// if path == "" {
-	// 	return err
-	// }
-	// if os.Getenv("CCOW_SVCNAME") != "" {
-	// 	service = os.Getenv("CCOW_SVCNAME")
-	// } else {
-	// 	service = d.Config.Servicename
-	// }
-	// data := make(map[string]interface{})
-	// data["serve"] = path
-	// url := fmt.Sprintf("service/%s/serve", service)
-	// _, err = d.Request("DELETE", url, data)
-	// if err != nil {
-	// 	log.Info("Error while handling request", err)
-	// }
-
-	// parts := strings.Split(path, "/")
 	url := fmt.Sprintf("clusters/%s/tenants/%s/buckets/%s", d.Config.Clustername, d.Config.Tenantname, r.Name)
 	_, err := d.Request("DELETE", url, nil)
 
@@ -307,7 +278,6 @@ func (d NdnfsDriver) Remove(r *volume.RemoveRequest) error {
 	if out, err := exec.Command("rm", "-rf", mnt).CombinedOutput(); err != nil {
 		log.Info("Error running rm command: ", err, "{", string(out), "}")
 	}
-
 	return err
 }
 
