@@ -81,7 +81,7 @@ func DriverAlloc(cfgFile string) NdnfsDriver {
 func (d *NdnfsDriver) Request(method, endpoint string, data map[string]interface{}) (body []byte, err error) {
 	url := d.Endpoint + endpoint
 	log.Debug("Issuing request to NexentaEdge, endpoint: ",
-		fmt.Sprintf("%s/%s", url, endpoint), " data: ", data, " method: ", method)
+		url, " data: ", data, " method: ", method)
 	if endpoint == "" {
 		err = errors.New("Unable to issue requests without specifying Endpoint")
 		log.Fatal(err.Error())
@@ -271,35 +271,36 @@ func (d NdnfsDriver) Remove(r *volume.RemoveRequest) error {
 	log.Info(DN, "Remove volume: ", r.Name)
 	d.Mutex.Lock()
 	defer d.Mutex.Unlock()
-	nfsList, err := d.GetNfsList()
-	if err != nil {
-		log.Info("Error getting nfs list", err)
-		return err
-	}
-	var path, service string
-	for i := range(nfsList) {
-		if strings.Contains(nfsList[i], r.Name) {
-			path = nfsList[i]
-		}
-	}
-	if path == "" {
-		return err
-	}
-	if os.Getenv("CCOW_SVCNAME") != "" {
-		service = os.Getenv("CCOW_SVCNAME")
-	} else {
-		service = d.Config.Servicename
-	}
-	data := make(map[string]interface{})
-	data["serve"] = path
-	url := fmt.Sprintf("service/%s/serve", service)
-	_, err = d.Request("DELETE", url, data)
-	if err != nil {
-		log.Info("Error while handling request", err)
-	}
+	// nfsList, err := d.GetNfsList()
+	// if err != nil {
+	// 	log.Info("Error getting nfs list", err)
+	// 	return err
+	// }
+	// var path, service string
+	// bucket := filepath.Join(d.Config.Clustername, d.Config.Tenantname, r.Name)
+	// for i := range(nfsList) {
+	// 	if strings.Contains(nfsList[i], bucket) {
+	// 		path = nfsList[i]
+	// 	}
+	// }
+	// if path == "" {
+	// 	return err
+	// }
+	// if os.Getenv("CCOW_SVCNAME") != "" {
+	// 	service = os.Getenv("CCOW_SVCNAME")
+	// } else {
+	// 	service = d.Config.Servicename
+	// }
+	// data := make(map[string]interface{})
+	// data["serve"] = path
+	// url := fmt.Sprintf("service/%s/serve", service)
+	// _, err = d.Request("DELETE", url, data)
+	// if err != nil {
+	// 	log.Info("Error while handling request", err)
+	// }
 
-	parts := strings.Split(path, "/")
-	url = fmt.Sprintf("clusters/%s/tenants/%s/buckets/%s", parts[0], parts[1], parts[2])
+	// parts := strings.Split(path, "/")
+	url = fmt.Sprintf("clusters/%s/tenants/%s/buckets/%s", d.Config.Clustername, d.Config.Tenantname, r.Name)
 	_, err = d.Request("DELETE", url, nil)
 
 	mnt := filepath.Join(d.Config.Mountpoint, r.Name)
