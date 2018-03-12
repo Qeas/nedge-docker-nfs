@@ -300,8 +300,8 @@ func (d NdnfsDriver) Remove(r *volume.RemoveRequest) error {
 	// }
 
 	// parts := strings.Split(path, "/")
-	url = fmt.Sprintf("clusters/%s/tenants/%s/buckets/%s", d.Config.Clustername, d.Config.Tenantname, r.Name)
-	_, err = d.Request("DELETE", url, nil)
+	url := fmt.Sprintf("clusters/%s/tenants/%s/buckets/%s", d.Config.Clustername, d.Config.Tenantname, r.Name)
+	_, err := d.Request("DELETE", url, nil)
 
 	mnt := filepath.Join(d.Config.Mountpoint, r.Name)
 	if out, err := exec.Command("rm", "-rf", mnt).CombinedOutput(); err != nil {
