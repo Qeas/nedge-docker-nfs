@@ -4,8 +4,6 @@ RUN apk update && apk add git
 
 CMD ["go", "get", "-d", "github.com/qeas/nedge-docker-nfs/..."]
 
-WORKDIR $GOPATH/src/github.com/qeas/nedge-docker-nfs
-
-CMD ["git", "checkout", "v2_plugin"]
+RUN cd $GOPATH/src/github.com/qeas/nedge-docker-nfs && git checkout v2_plugin
 
 CMD ["go", "get", "github.com/qeas/nedge-docker-nfs/..."]
